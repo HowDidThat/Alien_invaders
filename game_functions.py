@@ -80,7 +80,7 @@ def update_bullets(ai_settings,screen,aliens,bullets,stats,sb,bullets_aliens,shi
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0 :
             bullets.remove(bullet)
-    
+    #checks to see if a bullet has hit an alien
     collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
     if collisions :
         for aliens in collisions.values() :
@@ -88,6 +88,7 @@ def update_bullets(ai_settings,screen,aliens,bullets,stats,sb,bullets_aliens,shi
             stats.score += int (ai_settings.alien_points * ai_settings.alien_speed) * len(aliens)
             sb.prep_score()
     
+    # checks to see if a alien bullet has hit the ship
     for bullet in bullets_aliens :
         if ship.rect.colliderect(bullet.rect):
             ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
@@ -100,6 +101,8 @@ def update_bullets(ai_settings,screen,aliens,bullets,stats,sb,bullets_aliens,shi
 
     
 def update_bullets_aliens(ai_settings,screen,bullets_aliens):
+
+    """update the bullets of the aliens"""
     bullets_aliens.update()
     for bullet in bullets_aliens.copy():
         if bullet.rect.top >= ai_settings.screen_height:
