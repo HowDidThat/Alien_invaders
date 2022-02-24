@@ -1,9 +1,10 @@
 from operator import truediv
 import sys
 import pygame
-
+from  random import randint
 from time import sleep
 from classes import Bullet
+from classes_al import Bullet_alien
 from classes_al import Alien
 
 def check_events(ai_settings,screen,stats,play_button,ship,bullets):
@@ -51,7 +52,7 @@ def check_keyup_event(event, ship):
     elif event.key == pygame.K_DOWN:
         ship.move_down = False
 
-def update_screen(ai_settings, screen,stats, ship,aliens,bullets,play_button,sb):
+def update_screen(ai_settings, screen,stats, ship,aliens,bullets,play_button,sb,bullets_aliens):
     """Updateja screen and move to the updated screen"""
     #   Redraw the screen in each pass
     screen.fill(ai_settings.bg_color)
@@ -61,15 +62,20 @@ def update_screen(ai_settings, screen,stats, ship,aliens,bullets,play_button,sb)
     #redraw all bullets
     for bullet in bullets.sprites():
         bullet.draw_bullet()
+    
+    
+    for bullet in bullets_aliens.sprites():
+        bullet.draw_bullet()
     #draw the play button
     if not stats.game_active :
         play_button.draw_button()
 
     pygame.display.flip()
 
-def update_bullets(ai_settings,screen,aliens,bullets,stats,sb) :
+def update_bullets(ai_settings,screen,aliens,bullets,stats,sb,bullets_aliens,ship) :
     """update the pozition and the bullets on the screen""" 
     bullets.update()
+   
     #get rid of old bullets
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0 :
@@ -78,19 +84,33 @@ def update_bullets(ai_settings,screen,aliens,bullets,stats,sb) :
     collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
     if collisions :
         for aliens in collisions.values() :
+
             stats.score += int (ai_settings.alien_points * ai_settings.alien_speed) * len(aliens)
             sb.prep_score()
-
+    
+    for bullet in bullets_aliens :
+        if ship.rect.colliderect(bullet.rect):
+            ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
+            bullets_aliens.empty()
     if len(aliens) == 0 :
         bullets.empty()
         sleep(0.5)
         ai_settings.increase_lvl()
         create_fleet(ai_settings,screen,aliens)
 
-def update_aliens(ai_settings,stats,screen,ship,aliens,bullets) :
+    
+def update_bullets_aliens(ai_settings,screen,bullets_aliens):
+    bullets_aliens.update()
+    for bullet in bullets_aliens.copy():
+        if bullet.rect.top >= ai_settings.screen_height:
+            bullets_aliens.remove(bullet)
+
+def update_aliens(ai_settings,stats,screen,ship,aliens,bullets,bullets_aliens) :
     check_fleet_edges(ai_settings,aliens)
     aliens.update()
-
+    update_bullets_aliens(ai_settings,screen,bullets_aliens)
+    for alien in aliens.copy():
+        fire_bullet_alien(ai_settings,screen,alien,bullets_aliens)
     #check for sip colission.
     if pygame.sprite.spritecollideany(ship,aliens):
         if stats.ship_left > 0 :
@@ -117,6 +137,17 @@ def fire_bullet(ai_settings,screen,ship,bullets) :
     if ai_settings.max_bullets > len(bullets) :
         new_bullet = Bullet(ai_settings, screen, ship) 
         bullets.add(new_bullet)
+
+
+def fire_bullet_alien(ai_settings,screen,alien,bullets_aliens) :
+    #fire an alien bullet if it is the case
+    q = randint(0,ai_settings.bullet_chance)
+    if q < 1 :
+        
+        new_bullet = Bullet_alien(ai_settings,screen,alien)
+        bullets_aliens.add(new_bullet)
+
+
 
 def get_number_aliens_x(ai_settings,alien_width):
     """determine the number of aliens that fit in a row"""

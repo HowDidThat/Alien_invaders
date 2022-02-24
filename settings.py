@@ -17,18 +17,22 @@ class Settings():
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = 255, 0, 0
-        self.max_bullets = 4
+        self.max_bullets = 100
+        self.bullet_width_alien = 5
+        self.bullet_height_alien = 20
+        self.bullet_color_alien = 0,0,255
         #alien settings
         self.fleet_drop_speed = 10
         #fleet_direction = 1 -> right , -1 -> left
         self.ship_limit = 3
         self.speed_scale = 1.1
         self.initialize_dinamic_settings()
-        
+        self.bullet_chance = 10000
     def initialize_dinamic_settings(self):
         """All the game settings that change with time"""
         self.ship_speed = 1.5
         self.bullet_speed_factor = 3
+        self.bullet_speed_factor_alien = 0.1
         self.alien_speed = .5
         self.fleet_direction = 1 
         self.ship_speed_factor = 1.06

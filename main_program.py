@@ -26,15 +26,15 @@ def run_game():
     bullets = Group()
     #make the aliens 
     aliens = Group()
-    
+    bullets_aliens = Group()
     sb = Scoreboard(ai_settings,screen,stats)
     #create the fleet of aliens
     
     gf.create_fleet(ai_settings,screen,aliens)
     ship.update()
-    gf.update_bullets(ai_settings,screen,aliens,bullets,stats,sb)
-    gf.update_aliens(ai_settings, stats, screen, ship, aliens ,bullets)
-    gf.update_screen(ai_settings, screen, stats,ship, aliens ,bullets,play_button,sb)
+    gf.update_bullets(ai_settings,screen,aliens,bullets,stats,sb,bullets_aliens,ship)
+    gf.update_aliens(ai_settings, stats, screen, ship, aliens ,bullets,bullets_aliens)
+    gf.update_screen(ai_settings, screen, stats,ship, aliens ,bullets,play_button,sb,bullets_aliens)
 
 
     #Start the main loop for the game.
@@ -43,10 +43,8 @@ def run_game():
         gf.check_events(ai_settings,screen,stats,play_button,ship,bullets)
         if stats.game_active == True :
             ship.update()
-            gf.update_bullets(ai_settings,screen,aliens,bullets,stats,sb)
-            gf.update_aliens(ai_settings, stats, screen, ship, aliens ,bullets)
-            gf.update_screen(ai_settings, screen, stats,ship, aliens ,bullets,play_button,sb)
-
-
+            gf.update_bullets(ai_settings,screen,aliens,bullets,stats,sb,bullets_aliens,ship)
+            gf.update_aliens(ai_settings, stats, screen, ship, aliens ,bullets,bullets_aliens)
+            gf.update_screen(ai_settings, screen, stats,ship, aliens ,bullets,play_button,sb,bullets_aliens)
 
 run_game()
